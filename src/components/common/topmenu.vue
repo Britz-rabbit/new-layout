@@ -20,7 +20,7 @@
 
 
     <span class="titleCon">
-      <span>龙首矿提升工区管理系统</span>
+      <span>龙首矿智慧管控系统</span>
     </span>
 
     <div class="routerCon">
@@ -67,10 +67,8 @@ onBeforeUnmount(()=>{
 
   .con {
     .flex-a;
-    // .ba;
     width: 15%;
     align-items: center;
-    // padding-bottom: 1.4vh;
   }
 
   .routerCon {
@@ -82,7 +80,6 @@ onBeforeUnmount(()=>{
     color: #A8ABB2;
 
     :hover {
-      // color: rgb(21, 184, 206);
       color: #FFFFFF;
     }
   }
@@ -92,13 +89,11 @@ onBeforeUnmount(()=>{
     width: 25%;
     color: #84BFF2;
     line-height: 5vh;
-    font-size: 38px;
+    font-size: 46px;
     font-family: '楷体', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
       'Microsoft YaHei', '微软雅黑', ;
     span {
-      background-image: -webkit-linear-gradient(bottom, #bedcee, #84BFF2, #7FBAF2); //整体添加渐变背景
-      -webkit-background-clip: text; //将文字颜色透明化
-      -webkit-text-fill-color: transparent; //使用背景色填充文字区域
+     .gradient;
     }
   }
   

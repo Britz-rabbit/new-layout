@@ -8,7 +8,7 @@
 import { reactive, toRefs, ref } from "vue"
 import { onMounted } from "vue";
 //解决自适应
-const appRef = ref(null);
+const appRef = ref();
 const ratio = reactive({
   ww: 1,
   wh: 1,
@@ -33,7 +33,8 @@ onMounted(() => {
 
 <style lang="less" scoped>
 #dv-full-screen-container{
-  background: url('./assets/img/common/bg.png');
+  // background: url('./assets/img/common/bg.png');
+  background: url('./assets/img/common/bg_2.png');
   background-size: contain;
   font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
   'Microsoft YaHei', '微软雅黑', Arial, sans-serif;

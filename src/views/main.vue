@@ -68,8 +68,10 @@ const changeArea = (falg:string):void=>{
   margin-top: 1vh;
 
   .infoArea {
+    // .bb;
     .fh;
     width: 23%;
+    background-color: #24243680;
   }
 
   .centerArea {

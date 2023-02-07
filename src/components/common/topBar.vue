@@ -1,19 +1,22 @@
 <template>
   <div class="topBarCon">
-    <dv-decoration3 style="width:250px;height:15px;"/>
-    <div class="color-f" style="height: 23px;line-height: 23px;text-align: start;">
-      <div class="bb"></div>
-      <span class="color-f font-b">test</span>
+    <div class="color-f flex-s" style="height: 23px;line-height: 23px;text-align: start;background-color: #123A9860;">&nbsp;
+      <div class=" color-f font-b" style="color: #90FBFF;"><span class="iconfont icon-biaotitubiao"></span></div>
+      <span class="color-f font-c"> &nbsp;{{ title }}</span>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { reactive, toRefs, Prop } from "vue"
-const data = reactive({
-
+const props = defineProps({
+  title: {
+    type:String,
+    default:'组件标题',
+    required:true
+  }
 })
-const refData = toRefs(data)
+const { title } = toRefs(props)
 </script>
 
 <style lang="less" scoped>
@@ -21,7 +24,7 @@ const refData = toRefs(data)
 
 .topBarCon {
   .fw;
-  height: 38px !important;
+  height: 23px !important;
 
 }
 </style>

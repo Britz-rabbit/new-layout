@@ -6,7 +6,7 @@ export default ()=>{
     let day= d.getDate()
 
     let hours = d.getHours()
-    let mind = d.getMinutes()
+    let mind = d.getMinutes() < 10 ? '0'+d.getMinutes() : d.getMinutes()
 
     return `${year}年${month}月${day}日 ${hours}:${mind}`
 }

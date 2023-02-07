@@ -2,6 +2,9 @@ import { createApp } from 'vue'
 import App from './App.vue'
 const app = createApp(App)
 
+//iconfont
+import './assets/css/iconfont/iconfont.css'
+
 //router
 import router from './router'
 app.use(router)

@@ -1,64 +1,140 @@
-//common & mix
-.container{ 
+.container {
     width: 100%;
     text-align: center;
 }
 
-.circle{
-    border-radius: 50%;
+//size
+.w33 {
+    width: 33%;
 }
 
-
-.flex-a{
-    display: flex;
-    justify-content: space-around;
-}
-.flex-b{
-    display: flex;
-    justify-content: space-between;
-}
-.column{
-    flex-direction: column;
+.h33 {
+    height: 33%;
 }
 
-.ba{
-    border: 1px solid red;
-}
-.bb{
-    border: 1px solid blue;
-}
-
-.fw{
+.fw {
     width: 100%;
 }
-.fh{
+
+.fh {
     height: 100%;
 }
 
-.pointer{
-    :hover{
+.hw {
+    width: 50%;
+}
+
+.hh {
+    height: 48%;
+    margin: 1% 0;
+}
+
+//flex
+.flex-a {
+    display: flex;
+    justify-content: space-around;
+}
+
+.flex-b {
+    display: flex;
+    justify-content: space-between;
+}
+
+.flex-s {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.column {
+    flex-direction: column;
+}
+
+//border
+.ba {
+    border: 1px solid red;
+}
+
+.bb {
+    border: 1px solid blue;
+}
+
+.bc {
+    border: 1px solid #8B97B4;
+}
+
+.circle {
+    border-radius: 50%;
+}
+
+//animation
+.pointer {
+    &:hover {
         cursor: pointer;
     }
-    :active{
+
+    &:active {
         cursor: pointer;
+    }
+}
+
+.underline {
+    &::after {
+        content: " ";
+        display: block;
+        width: 56%;
+        margin: 0 auto;
+        margin-top: 3px;
+        border: 1px dotted transparent;
+        border-image: linear-gradient(to top, rgba(3, 44, 54, 0.1), #fff, rgba(3, 44, 54, 0.1)) 1;
+        transform: rotate(-0.5 turn);
     }
 }
 
 //color
-.color-f{
+.color-f {
     color: #FFFFFF;
 }
-.color-ff{
+
+.color-ff {
     color: #FFFFFF !important;
+}
+
+.l-blue {
+    color: #52C6E8;
+}
+
+.d-blue {
+    color: #3D8CE7;
+}
+
+.gray {
+    color: #7885AA;
+}
+
+.gradient {
+    background-image: -webkit-linear-gradient(bottom, #bedcee, #84BFF2, #7FBAF2); //整体添加渐变背景
+    -webkit-background-clip: text; //将文字颜色透明化
+    background-clip: text;
+    -webkit-text-fill-color: transparent; //使用背景色填充文字区域
 }
 
 
 //font-size
-.font-a{
+.font-a {
     font-size: 22px;
     font-weight: 600;
 }
-.font-b{
+
+.font-b {
     font-size: 18px;
     font-weight: 600;
+}
+
+.font-c {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.tc{
+    text-align: center;
 }
