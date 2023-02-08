@@ -91,6 +91,7 @@
 
       <div class="con4">
         <infoLine></infoLine>
+        <!-- <controlSpeedPanel></controlSpeedPanel> -->
       </div>
     </div>
 
@@ -103,6 +104,8 @@ import topBar from "../common/topBar.vue";
 import infoBlock from "./components/infoBlock.vue";
 import contrastLine from "../echarts/main/infoColumn.vue";
 import infoLine from "../echarts/main/infoLine.vue";
+// import controlSpeedPanel from "../echarts/main/controlSpeedPanel.vue";
+
 //conifgs
 const powerConfig = reactive({
   value: 66,

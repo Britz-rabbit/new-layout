@@ -90,6 +90,9 @@
     }
 }
 
+.hid{
+    overflow: hidden;
+}
 //color
 .color-f {
     color: #FFFFFF;
@@ -97,6 +100,10 @@
 
 .color-ff {
     color: #FFFFFF !important;
+}
+
+.color-a{
+    color: aqua;
 }
 
 .l-blue {
@@ -113,6 +120,12 @@
 
 .gradient {
     background-image: -webkit-linear-gradient(bottom, #bedcee, #84BFF2, #7FBAF2); //整体添加渐变背景
+    -webkit-background-clip: text; //将文字颜色透明化
+    background-clip: text;
+    -webkit-text-fill-color: transparent; //使用背景色填充文字区域
+}
+.gradient2 {
+    background-image: -webkit-linear-gradient(bottom, #266992, #68acd3, #266992); //整体添加渐变背景
     -webkit-background-clip: text; //将文字颜色透明化
     background-clip: text;
     -webkit-text-fill-color: transparent; //使用背景色填充文字区域

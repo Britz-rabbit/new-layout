@@ -12,8 +12,10 @@ onMounted(() => {
 })
 
 const infoColumn = ref();//使用ref获取虚拟dom，通过其value值进行参数配置
-
+let timer = ref()
 function init() {
+    clearTimeout(timer.value)
+    
     var myChart = echarts.init(infoColumn.value);
     var option = {
         // backgroundColor: '',
@@ -235,7 +237,11 @@ function init() {
             },
         ]
     };
-    myChart.setOption(option)
+
+    setTimeout(() => {
+      timer.value = myChart.setOption(option) 
+    }, 100);
+    
 }
 
 

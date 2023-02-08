@@ -1,5 +1,5 @@
 <template>
-    <div class="container" ref="infoLine">
+    <div class="container fw" ref="infoLine">
 
     </div>
 </template>
@@ -9,13 +9,14 @@ import { reactive, ref, onMounted } from "vue"
 import * as echarts from 'echarts'
 
 onMounted(() => {
-
     init()
 })
 
 const infoLine = ref()
-
+let timer = ref()
 function init() {
+    clearTimeout(timer.value)
+
     var myChart = echarts.init(infoLine.value)
 
     const CubeLeft = echarts.graphic.extendShape({
@@ -278,7 +279,10 @@ function init() {
         }]
     }
 
-    myChart.setOption(option)
+    setTimeout(() => {
+      timer.value = myChart.setOption(option)  
+    }, 100);
+    
 }
 </script>
 

@@ -3,7 +3,12 @@
     <topmenu></topmenu>
     <div class="con">
       <div class="infoArea">
-        <baseInfo></baseInfo>
+        <transition name="el-zoom-in-center">
+          <baseInfo v-show="leftAreaFlag"></baseInfo>
+        </transition>
+        <transition name="el-zoom-in-center">
+          <robotControl v-show="!leftAreaFlag"></robotControl>
+        </transition>
       </div>
       <div class="centerArea">
         <centerVideo></centerVideo>
@@ -16,45 +21,33 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onBeforeMount } from "vue"
+import { reactive, ref, onBeforeMount, getCurrentInstance } from "vue"
 //common components
 import topmenu from "../components/common/topmenu.vue";
 //main components
 import baseInfo from "../components/main/baseInfo.vue";
-import centerVideo from '../components/main/centerVideo.vue'
+import robotControl from "../components/main/robotControl.vue";
+import centerVideo from '../components/main/centerComponent.vue'
 import detectDevices from "../components/main/detectDevices.vue"; 
+import varableSensor from "../components/main/varableSensor.vue";
 
-//置前钩子
 onBeforeMount(() => {
   
 })
 
-//信息栏切换
-type SwitchFlages = {
-  leftFlag: boolean,
-  rightFlage: boolean
-}
-const infoSwitchFlages = reactive<SwitchFlages>({
-  leftFlag: true,
-  rightFlage: true
-})
-const changeArea = (falg:string):void=>{
-  switch (falg){
-    case 'l1':
-      console.info('left 1');
-    break;
-    case 'l2':
-      console.info('left 2');
-      break;
-    case 'r1':
-      console.info('right 1');
-      break;
-    case 'r2':
-      console.info('right 2');
-      break;
-  }
-}
+//changeArea
+const instance = getCurrentInstance()
+let leftAreaFlag = ref(true)
+let rightAreaFlag = ref(true)
 
+instance?.proxy?.$Bus.on('changeArea',(areaNumber)=>{
+  if(areaNumber<3){
+    leftAreaFlag.value = areaNumber===1?true:false
+  }else{
+    rightAreaFlag.value = areaNumber===3?true:false
+  }
+  
+})
 </script>
 
 <style lang="less" scoped>
@@ -63,15 +56,14 @@ const changeArea = (falg:string):void=>{
 .con {
   .container;
   .flex-a;
-  // .ba;
   height: 94vh;
   margin-top: 1vh;
 
   .infoArea {
-    // .bb;
     .fh;
     width: 23%;
     background-color: #24243680;
+    .hid;
   }
 
   .centerArea {

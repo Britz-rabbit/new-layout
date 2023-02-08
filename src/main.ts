@@ -32,13 +32,12 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 //mitt
 import mitt from 'mitt'
 const Mit = mitt()
-app.config.globalProperties.$bus = Mit
 declare module "vue" {
     export interface ComponentCustomProperties {
         $Bus: typeof Mit
     }
 }
-
+app.config.globalProperties.$Bus = Mit
 
 
 app.mount('#app')
