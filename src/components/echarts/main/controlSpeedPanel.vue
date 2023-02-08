@@ -10,7 +10,7 @@ import * as echarts from 'echarts'
 onMounted(() => {
     init()
 })
-// let val = ref(63)
+
 const controlSpeedPanel = ref()
 let timer = ref()
 
@@ -24,11 +24,11 @@ function init() {
     let option = {
         title: {
             text: '当前行驶速度',
-            left:'20',
-            top:'18',
+            left:'72',
+            bottom:'0',
             textStyle: {
                 color: '#B7814B',
-                fontSize:14
+                fontSize:16
             },
         },
         // backgroundColor: '#353c60',
@@ -238,29 +238,27 @@ function init() {
                     },
                 },
             },
-            // {
-            //     name: 'pie',
-            //     type: 'pie',
-            //     clockWise: true,
-            //     startAngle: -270,
-            //     radius: ['76%', '70%'],
-            //     hoverAnimation: false,
-            //     center: ['50%', '50%'],
-            //     data: ['100'],
-            //     z: 1,
-            //     labelLine: {
-            //         show: false,
-            //     },
-            //     itemStyle: {
-            //         normal: {
-            //             color: 'rgba(255,255,255,0.1)',
-            //         },
-            //     },
-            // },
+            {
+                name: 'pie',
+                type: 'pie',
+                clockWise: true,
+                startAngle: -270,
+                radius: ['40%', '54%'],
+                hoverAnimation: false,
+                center: ['40%', '60%'],
+                data: ['100'],
+                z: 1,
+                labelLine: {
+                    show: false,
+                },
+                itemStyle: {
+                    normal: {
+                        color: 'rgba(255,255,255,0.1)',
+                    },
+                },
+            },
         ],
     };
-
-    myChart.setOption(option)
 
    timer.value = setTimeout(() => {
         myChart.setOption(option)

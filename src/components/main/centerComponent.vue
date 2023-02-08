@@ -144,9 +144,11 @@ function changePatrolMode(mode: number) {
         }
         .ready{
           left: 0;
+          left: -58px;
         }
         .active{
           left: -58px;
+          left: 0px;
         }
       }
     }
