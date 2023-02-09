@@ -4,10 +4,10 @@
     <div class="con">
       <div class="infoArea">
         <transition name="el-zoom-in-center">
-          <baseInfo v-show="leftAreaFlag"></baseInfo>
+          <baseInfo v-if="leftAreaFlag"></baseInfo>
         </transition>
         <transition name="el-zoom-in-center">
-          <robotControl v-show="!leftAreaFlag"></robotControl>
+          <robotControl v-if="!leftAreaFlag"></robotControl>
         </transition>
       </div>
       <div class="centerArea">
@@ -62,7 +62,8 @@ instance?.proxy?.$Bus.on('changeArea',(areaNumber)=>{
   .infoArea {
     .fh;
     width: 23%;
-    background-color: #24243680;
+    // background-color: #24243680;
+    background-color: #8686a028;
     .hid;
   }
 

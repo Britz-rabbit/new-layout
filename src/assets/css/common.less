@@ -48,7 +48,11 @@
 .column {
     flex-direction: column;
 }
-
+.center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 //border
 .ba {
     border: 1px solid red;
@@ -64,6 +68,13 @@
 
 .circle {
     border-radius: 50%;
+}
+
+.hover{
+    &:hover{
+        transition: 0.3s;
+        color: aqua;
+    }
 }
 
 //animation

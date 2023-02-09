@@ -12,11 +12,13 @@
           <i class="iconfont icon-fuwei-02"></i>
           <span>故障复位</span>
         </div>
-        <div class="functionBlock ">
-          <i class="iconfont icon-cheqianbu-01 active" style="font-size: 48px;"></i>
-          <span class="active" style="transform: translateX(-20px)">前灯</span>
+        <div class="functionBlock " :class="{ active: robotLight.leftLight }"
+          @click="robotLight.leftLight = !robotLight.leftLight">
+          <i class="iconfont icon-cheqianbu-01" style="font-size: 48px;"></i>
+          <span class="" style="transform: translateX(-20px)">前灯</span>
         </div>
-        <div class="functionBlock">
+        <div class="functionBlock" :class="{ active: robotLight.rightLight }"
+          @click="robotLight.rightLight = !robotLight.rightLight">
           <i class="iconfont icon-chehoubu-01" style="font-size: 48px;"></i>
           <span style="transform: translateX(-20px)">后灯</span>
         </div>
@@ -40,26 +42,55 @@
                 </div>
               </div>
             </div>
-
             <div class=" flex-a" style="height: 75%;align-items: center;">
-              <div class="w33 gray pointer" style="font-size: 76px;">
+              <!-- back -->
+              <div class="w33 gray hover pointer" :class="{ active: is_robotForward === 1 }" @click="changeForward(1)"
+                style="font-size: 76px;">
                 <el-icon>
                   <CaretLeft />
                 </el-icon>
               </div>
-              <div class="w33 fh" style="position: relative;">
-                <span style="color:#AC7B49;white-space: nowrap;position: absolute;right: -20px;">设置速度:
-                  <span style="color:aqua;font-size: 20px;">{{ customSpeed }}</span> m/s
+              <!-- speed -->
+              <div class="w33 fh flex-a column" style="position: relative;">
+                <span style="color:#AC7B49;white-space: nowrap;height: 16%;transform: translateX(-26px);">设置速度:
+                  <span style="color:aqua;font-size: 20px;">{{ customSpeed.toFixed(2) }}</span> m/s
                 </span>
-
+                <div class=" flex-a column center" style="height: 80%;transform: translateY(20px);">
+                  <div class=" circle center" @click="changeSpeed('add')"
+                    style="height: 58px;width: 58px;font-size:76px;transform: translateY(-22px);color:#7885AA;">
+                    <el-icon class="hover pointer">
+                      <CaretTop />
+                    </el-icon>
+                  </div>
+                  <div class=" circle center" style="height: 58px;width: 58px;transform: translateY(-22px);">
+                    <div class="circle center hover pointer" id="robotStop" :class="{ active: is_robotForward === 0 }"
+                      @click="changeForward(0)">
+                      <span style="transform: translateY(-2px);font-weight: 600;">| |</span>
+                    </div>
+                  </div>
+                  <div class=" circle center" @click="changeSpeed('min')"
+                    style="height: 58px;width: 58px;font-size:76px;transform: translateY(-22px);color:#7885AA;">
+                    <el-icon class="hover pointer">
+                      <CaretBottom />
+                    </el-icon>
+                  </div>
+                </div>
+                <!-- step -->
+                <el-select v-model="speedStepLength" placeholder="加速步长"
+                  style="width: 110px;transform: translateX(-20px);" size="large">
+                  <el-option key="0.5" label="步长:0.05" :value="0.05" />
+                  <el-option key="1.0" label="步长:0.10" :value="0.10" />
+                  <el-option key="1.5" label="步长:0.15" :value="0.15" />
+                </el-select>
               </div>
-              <div class="w33 gray active pointer" style="font-size: 76px;">
+              <!-- forward -->
+              <div class="w33 gray hover pointer" :class="{ active: is_robotForward === 2 }" @click="changeForward(2)"
+                style="font-size: 76px;">
                 <el-icon>
                   <CaretRight />
                 </el-icon>
               </div>
             </div>
-
           </div>
 
         </div>
@@ -70,30 +101,42 @@
         <div class=" flex-a" style="height: 90%;">
           <div class="fh" style="width:66%">
             <div class="TripodPanel">
-              <div class="panelTop" @click="sendControlMsg('t1', '云台上旋')">上俯</div>
-              <div class="panelRight" @click="sendControlMsg('t2', '云台右旋')">右旋</div>
-              <div class="panelBottom" @click="sendControlMsg('t3', '云台下旋')">下仰</div>
-              <div class="panelLeft" @click="sendControlMsg('t4', '云台左旋')">左旋</div>
-              <div class="panelCenter" @click="sendControlMsg('t5', '云台复位')">
-                <el-icon><Refresh /></el-icon>
+              <div class="panelTop" @click="sendControlMsg('camera', 1, 0, 0, 0, '云台上旋')">上俯</div>
+              <div class="panelRight" @click="sendControlMsg('camera', 4, 0, 0, 0, '云台右旋')">右旋</div>
+              <div class="panelBottom" @click="sendControlMsg('camera', 2, 0, 0, 0, '云台下旋')">下仰</div>
+              <div class="panelLeft" @click="sendControlMsg('camera', 3, 0, 0, 0, '云台左旋')">左旋</div>
+              <div class="panelCenter" @click="sendControlMsg('camera', 5, 0, 0, 0, '云台复位')">
+                <el-icon>
+                  <Refresh />
+                </el-icon>
               </div>
             </div>
           </div>
 
-          <div class=" fh color-f flex-b column" style="width:30%">
+          <div class="fh color-f flex-b column" style="width:32%;transform: translateX(-6%);">
             <div class="" style="color:#AC7B49;white-space: nowrap;height: 10%;">设置亮度：
-              <span class="color-a" style="font-size: 18px;">{{ customLight }}</span>
+              <span class="color-a" style="font-size: 18px;">{{ tripodLight }}</span>
             </div>
-
-            <div class="bb flex-a" style="height: 88%;">
-              <div class=" fh color-f" style="width: 40%;display: flex;align-items: center;">
-                <i class="iconfont icon-ludeng ba circle" style="font-size: 46px;width: 100%;height: 46px;"></i>
+            <div @mouseup="sendControlMsg('camera', 8, tripodLight, 0, 0, `将云台亮度调整至${tripodLight}`)" class="flex-a"
+              style="height: 20%;">
+              <el-slider v-model="tripodLight" :marks="tripodLightMarks" size="larger" />
+            </div>
+            <div class="tripodLightPanel" style="height: 70%;">
+              <div class="hh ">
+                <button @click="sendControlMsg('camera', 7, 0, 0, 0, '自动校准')">
+                  <el-icon style="font-size: 18px;transform: translateY(3px);">
+                    <Sort />
+                  </el-icon>
+                  自动校准
+                </button>
               </div>
-              <div class="ba fh" style="width: 20%;">
-
-              </div>
-              <div class=" fh color-f" style="width: 40%;display: flex;align-items: center;">
-                <i class="iconfont icon-bulb ba circle" style="font-size: 36px;width: 100%;height: 42px;text-align: center;padding-top: 2px;"></i>
+              <div class="hh ">
+                <button @click="sendControlMsg('camera', 6, 0, 0, 0, '一键重启')">
+                  <el-icon style="font-size: 18px;transform: translateY(3px);">
+                    <SwitchButton />
+                  </el-icon>
+                  一键重启
+                </button>
               </div>
             </div>
           </div>
@@ -114,15 +157,44 @@ import controlSpeedPanel from "../echarts/main/controlSpeedPanel.vue";
 onMounted(() => {
   timer.value = setInterval(() => {
     changeLocationPoint()
-    // changeSpeed(true)
   }, 400)
+  initWs()
 })
 
 onBeforeUnmount(() => {
   clearInterval(timer.value)
 })
 
+//common
 let timer = ref()
+
+//ws & sendMsg
+var controlWs = new WebSocket(
+  `ws://192.168.2.7:30006`
+)
+
+function initWs() {
+  controlWs.onmessage = function (e) {
+    console.info(e.data);
+  }
+  controlWs.onerror = function () {
+    console.info('controlWs error');
+  }
+}
+
+function sendControlMsg(type: string, action: number, light: number,
+  for_led: number, back_led: number, message: string) {
+  let paras = {
+    type,
+    action: String(action),
+    light: String(light),
+    for_led: String(for_led),
+    back_led: String(back_led),
+    message
+  }
+  controlWs.send(JSON.stringify(paras))
+  console.info(message);
+}
 
 // location movement
 let progress = ref()
@@ -135,17 +207,64 @@ function changeLocationPoint() {
   location.value = location.value > totalDistance - 10 ? 0 : location.value += 6
 }
 
-// speed change controller
-let customSpeed = ref(0.6)
+//robot control
+let customSpeed = ref(0.5)
+let speedStepLength = ref()
+let robotLight = reactive({
+  leftLight: false,
+  rightLight: false
+})
+let is_robotForward = ref(0)// 0:stop 1:back 2:forward
 
-
-
-//control Tripod
-let customLight = ref(10)
-
-function sendControlMsg(flag: string, msg: string) {
-  console.info('num:' + flag, msg);
+function changeForward(modeNum: number) {
+  is_robotForward.value = modeNum
+  switch (modeNum) {
+    case 0:
+      sendControlMsg('robot', 5, 0, 0, 0, '机器人停止')
+      break;
+    case 1:
+      sendControlMsg('robot', 2, customSpeed.value, 0, 0, `机器人以${customSpeed.value}后退`)
+      break;
+    case 2:
+      sendControlMsg('robot', 1, customSpeed.value, 0, 0, `机器人以${customSpeed.value}前进`)
+      break;
+    default:
+      break;
+  }
 }
+function changeSpeed(mode: string) {
+  if (mode === 'add') { customSpeed.value += speedStepLength.value || 0.05 } else {
+    customSpeed.value -= speedStepLength.value || 0.05
+  }
+  if (is_robotForward) {
+    customSpeed.value === 2 ?
+      sendControlMsg('robot', 1, customSpeed.value, 0, 0, `机器人以${customSpeed.value}前进`) :
+      sendControlMsg('robot', 2, customSpeed.value, 0, 0, `机器人以${customSpeed.value}后退`)
+  }
+}
+
+//tripod control
+let tripodLight = ref(50)
+let tripodLightMarks = reactive({
+  15: {
+    style: {
+      color: 'aqua',
+    },
+    label: '15',
+  },
+  50: {
+    style: {
+      color: 'aqua',
+    },
+    label: '50',
+  },
+  85: {
+    style: {
+      color: 'aqua',
+    },
+    label: '85',
+  },
+})
 </script>
 
 <style lang="less" scoped>
@@ -156,6 +275,9 @@ function sendControlMsg(flag: string, msg: string) {
     color: aqua !important;
   }
 
+  // *{
+  //   transition: 0.2s;
+  // }
   .functionBar {
     width: 98%;
     margin: auto;
@@ -172,6 +294,10 @@ function sendControlMsg(flag: string, msg: string) {
       width: 22%;
 
       &:hover {
+        color: #4dd4d4;
+      }
+
+      &:active {
         color: aqua;
       }
 
@@ -186,6 +312,20 @@ function sendControlMsg(flag: string, msg: string) {
   }
 
   .robotControl {
+
+    #robotStop {
+      width: 78%;
+      height: 78%;
+      border: 2px solid 7885AA;
+      font-size: 32px;
+      color: #7885AA;
+      border: 2px solid #7885AA;
+
+      &:hover {
+        color: aqua;
+        border: 2px solid aqua;
+      }
+    }
 
     .barCon {
       .hid;
@@ -215,9 +355,6 @@ function sendControlMsg(flag: string, msg: string) {
         }
       }
     }
-
-
-
   }
 
   .TripodControl {
@@ -312,16 +449,63 @@ function sendControlMsg(flag: string, msg: string) {
         font-size: 36px;
         border: 1px solid #e8e8e8;
         transition: all .3s ease;
+
         // box-shadow: 6px 8px 6px #c5c5c5,
         //   -6px -8px 6px #c5c5c5;
-        &:active {
+        &:hover {
           color: #666;
           box-shadow: inset 4px 4px 12px #c5c5c5,
             inset -4px -4px 12px #ffffff;
           transform: rotate(-90deg);
         }
+
+        &:active {
+          color: aqua;
+        }
       }
     }
+
+    .tripodLightPanel {
+      div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        button {
+          // margin: 12px;
+          height: 50px;
+          width: 120px;
+          border-radius: 10px;
+          background: #333;
+          justify-content: center;
+          align-items: center;
+          box-shadow: -3px -3px 12px #444, 5px 5px 12px #222, inset 5px 5px 10px #444, inset -5px -5px 10px #222;
+          // font-family: 'Damion', cursive;
+          border: none;
+          font-size: 16px;
+          color: rgb(170, 170, 170);
+          transition: 300ms;
+        }
+
+        button:hover {
+          box-shadow: -3px -3px 12px #444, 5px 5px 12px #222, inset 5px 5px 10px #222, inset -5px -5px 10px #444;
+          color: #d6d6d6;
+          transition: 300ms;
+          cursor: pointer;
+          color: #ffffff;
+          font-size: 18px;
+        }
+
+        button:active {
+          color: #59bbb6;
+          transition: 200ms;
+
+        }
+
+      }
+    }
+
+
   }
 }
 </style>
