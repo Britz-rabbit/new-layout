@@ -7,7 +7,7 @@
         <i class="iconfont icon-yiyanghuatan underline" style="font-size: 26px;"></i>
     </div>
     <div class="flex-b" style="height: 22px;width: 70%;margin: 0 auto;">
-        <span style="color:aqua" class="font-c">{{ data }} <span class="color-f">{{ unit }}</span></span>
+        <span style="color:aqua;margin: 0 auto;white-space: nowrap;" class="font-c">{{ data }} <span class="color-f">{{ unit }}</span></span>
     </div>
    </div>
   </div>

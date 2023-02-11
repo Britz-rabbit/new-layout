@@ -6,20 +6,32 @@
 
 <script lang="ts" setup>
 import { reactive, toRefs, ref, onBeforeUnmount, onMounted } from "vue"
-
+import { useCurrenInfo } from "./store/";
 onMounted(() => {
   setTimeout(() => {
     resize()
   }, 1000);
 
+  setTimeout(() => {
+    globalWs.send('getsensor')
+  }, 280);
+
   initWs()
+
+  timer.value = setInterval(()=>{
+    globalWs.send('getsensor')
+  },1000)
 })
 
 onBeforeUnmount(() => {
   globalWs.close()
+  clearInterval(timer.value)
 })
 
+let timer = ref()
+
 //resize
+//#region
 const appRef = ref();
 const ratio = reactive({
   ww: 1,
@@ -33,25 +45,24 @@ const resize = () => {
   appRef.value.style.setProperty('--scaleX', ratio.ww)
   appRef.value.style.setProperty('--scaleY', ratio.wh)
 }
+//#endregion
 
 //ws
+//#region
 var globalWs = new WebSocket(
   `ws://192.168.2.7:30006`
 )
-
+const CurrenInfo = useCurrenInfo()
 function initWs() {
   globalWs.onmessage = function (e) {
-    console.info(e.data);
+    console.warn(e.data);
+    CurrenInfo.robotInfo = JSON.parse(e.data)
   }
   globalWs.onerror = function () {
-    console.info('glbalWs error');
+    console.warn('glbalWs error');
   }
 }
-
-setTimeout(() => {
-  globalWs.send('test msg')
-}, 2000);
-
+//#endregion
 
 </script>
 

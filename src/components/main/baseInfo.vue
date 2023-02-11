@@ -24,13 +24,15 @@
           </div>
           <div class="flex-b" style="height: 42px;">
             <div class="w33 fh font-b" style="line-height:42px;">
-              <div class="color-f flex-a">位置&nbsp;&nbsp;<span class="l-blue">320m</span></div>
+              <div class="color-f flex-a">位置&nbsp;&nbsp;<span class="l-blue">{{ robotPosition }}m</span></div>
             </div>
             <div class="w33 fh font-b" style="line-height:42px;">
-              <div class="color-f flex-a">速度&nbsp;&nbsp;<span class="l-blue">0.7m/s</span></div>
+              <div class="color-f flex-a">速度&nbsp;&nbsp;<span class="l-blue">{{ robotSpeed }}m/s</span></div>
             </div>
             <div class="w33 fh font-b" style="line-height:42px;">
-              <div class="color-f flex-a">状态&nbsp;&nbsp;<span class="l-blue">正常</span></div>
+              <div class="color-f flex-a">状态&nbsp;&nbsp;<span class="l-blue" :class="{ error: robotState === '异常' }">{{
+                robotState
+              }}</span></div>
             </div>
           </div>
         </div>
@@ -44,13 +46,17 @@
           </div>
           <div class="flex-b" style="height: 42px;">
             <div class="w33 fh font-b" style="line-height:42px;">
-              <div class="color-f flex-a">转速&nbsp;&nbsp;<span class="l-blue">1.4m/s</span></div>
+              <div class="color-f flex-a">转速&nbsp;&nbsp;<span class="l-blue"> {{ Math.abs(evenRotateSpeed).toFixed(0) }}
+                  r/s</span></div>
             </div>
             <div class="w33 fh font-b" style="line-height:42px;">
-              <div class="color-f flex-a">温度&nbsp;&nbsp;<span class="l-blue">36°c</span></div>
+              <div class="color-f flex-a">温度&nbsp;&nbsp;<span class="l-blue"> {{ Math.abs(evenTemperat).toFixed(0) }}
+                  °c</span></div>
             </div>
             <div class="w33 fh font-b" style="line-height:42px;">
-              <div class="color-f flex-a">电流&nbsp;&nbsp;<span class="l-blue">3A</span></div>
+              <div class="color-f flex-a">电流&nbsp;&nbsp;<span class="l-blue">{{
+                Math.abs(evenRotote).toFixed(0)
+              }}A</span></div>
             </div>
           </div>
         </div>
@@ -58,18 +64,19 @@
 
       <div class="con2 ">
         <div class="hh flex-a color-f" style="transform: translateY(-10px);">
-          <infoBlock v-for="i in infos[0]" :title="i.title" :icon="i.icon" :data="i.data" :unit="i.unit">
+          <infoBlock v-for="i in infoArr[0]" :title="i.title" :icon="i.icon" :data="i.data" :unit="i.unit">
           </infoBlock>
         </div>
         <div class="hh flex-a color-f">
-          <infoBlock v-for="i in infos[1]" :title="i.title" :icon="i.icon" :data="i.data" :unit="i.unit">
+          <infoBlock v-for="i in infoArr[1]" :title="i.title" :icon="i.icon" :data="i.data" :unit="i.unit">
           </infoBlock>
         </div>
       </div>
 
       <div class="con3 flex-a column">
         <div class="con3-con flex-b hh ">
-          <div class="flex-a column color-f " style="height:58px;width:60px;margin: auto 0;transform: translateY(10px);">
+          <div class="flex-a column color-f "
+            style="height:58px;width:60px;margin: auto 0;transform: translateY(10px);">
             <i class="iconfont icon-lashengliefengji color-ff underline" style="font-size: 24px;"></i>
             <span class="font-c">拉绳开关</span>
           </div>
@@ -99,35 +106,73 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, toRefs } from "vue"
+import { reactive, toRefs, computed, watch, watchEffect, onMounted, getCurrentInstance } from "vue"
 import topBar from "../common/topBar.vue";
 import infoBlock from "./components/infoBlock.vue";
 import contrastLine from "../echarts/main/infoColumn.vue";
 import infoLine from "../echarts/main/infoLine.vue";
-// import controlSpeedPanel from "../echarts/main/controlSpeedPanel.vue";
+import { useCurrenInfo } from "../../store";
+
+onMounted(() => {
+  
+})
+
+var instance = getCurrentInstance()
+
+//infos
+var CurrenInfo = useCurrenInfo()
+// let { sensor, position, battery, warning } = reactive(CurrenInfo?.robotInfo)// it will lose respond of data in pinia
+let batteryPower = computed(() => Math.floor(Number(CurrenInfo?.robotInfo?.battery.cap_r) / Number(CurrenInfo?.robotInfo?.battery.cap_t) * 100))
+let robotPosition = computed(() => Math.floor(Number(CurrenInfo?.robotInfo?.position?.position) / 1000))
+let robotSpeed = computed(() => Math.floor(Number(CurrenInfo?.robotInfo?.position?.speed)))
+let robotState = computed(() => Number(CurrenInfo?.robotInfo?.warning?.warning) === 0 ? '正常' : '异常')
+let evenRotote = computed(() => (Number(CurrenInfo?.robotInfo?.motor?.m1_i)) + Number(CurrenInfo?.robotInfo?.motor?.m2_i) / 2)
+let evenTemperat = computed(() => (Number(CurrenInfo?.robotInfo?.motor?.m1_t)) + Number(CurrenInfo?.robotInfo?.motor?.m2_t) / 2)
+let evenRotateSpeed = computed(() => (Number(CurrenInfo?.robotInfo?.motor?.m1_v)) + Number(CurrenInfo?.robotInfo?.motor?.m2_v) / 2)
 
 //conifgs
-const powerConfig = reactive({
-  value: 66,
+var powerConfig = reactive({
+  value: batteryPower.value,
   colors: ['#01c4f9', '#c135ff'],
   lineDash: [10, 2],
   borderRadius: 10,
   formatter: '{value}%'
 })
 
-//infos
-let infos = reactive([[
-  { title: '温度', icon: 'iconfont ', data: '17-28', unit: '°C' },
-  { title: '湿度', icon: '', data: '17-28', unit: '°C' },
-  { title: '气体', icon: '', data: '17-28', unit: '°C' },
-  { title: '震动', icon: 'test', data: '17-28', unit: '°C' },
+watch(() => batteryPower.value, (v) => {
+  powerConfig = {
+    value: v,
+    colors: ['#01c4f9', '#c135ff'],
+    lineDash: [10, 2],
+    borderRadius: 10,
+    formatter: '{value}%'
+  }, { immediate: true }
+})
+
+// watchEffect(()=>{
+//   powerConfig = {
+//     value: batteryPower.value,
+//     colors: ['#01c4f9', '#c135ff'],
+//     lineDash: [10, 2],
+//     borderRadius: 10,
+//     formatter: '{value}%'
+//   }
+// })
+
+//infoBlock
+let infoArr = reactive([[
+  { title: '环境温度', icon: 'iconfont ', data: CurrenInfo?.robotInfo?.sensor?.t1, unit: '°C' },
+  { title: '环境湿度', icon: '', data: CurrenInfo?.robotInfo?.sensor?.h1, unit: '%' },
+  { title: 'PM 2.5', icon: '', data: CurrenInfo?.robotInfo?.sensor?.pm, unit: 'ug/m³' },
+  { title: '氧气浓度', icon: 'test', data: CurrenInfo?.robotInfo?.sensor?.o2, unit: '%' },
 ],
 [
-  { title: '温度', icon: '2-1', data: '17-28', unit: '°C' },
-  { title: '温度', icon: '', data: '17-28', unit: '°C' },
-  { title: '温度', icon: '', data: '17-28', unit: '°C' },
-  { title: '温度', icon: 'end', data: '17-28', unit: '°C' },
+  { title: '内部温度', icon: '2-1', data: CurrenInfo?.robotInfo?.sensor?.t2, unit: '°C' },
+  { title: '内部湿度', icon: '', data: CurrenInfo?.robotInfo?.sensor?.h2, unit: '%' },
+  { title: '一氧化碳', icon: '', data: CurrenInfo?.robotInfo?.sensor?.co, unit: 'ppm' },
+  { title: '甲烷浓度', icon: 'end', data: CurrenInfo?.robotInfo?.sensor?.ch4, unit: '°C' },
 ]])
+
 
 </script>
 
@@ -136,6 +181,7 @@ let infos = reactive([[
 
 .container {
   .fh;
+
   .con1 {
     height: 23%;
     .flex-a;

@@ -14,7 +14,12 @@
         <centerVideo></centerVideo>
       </div>
       <div class="infoArea">
-        <detectDevices></detectDevices>
+        <transition name="el-zoom-in-center">
+          <detectDevices v-if="rightAreaFlag"></detectDevices>
+        </transition>
+        <transition name="el-zoom-in-center">
+          <varableSensor v-if="!rightAreaFlag"></varableSensor>
+        </transition>
       </div>
     </div>
   </div>
@@ -40,7 +45,7 @@ const instance = getCurrentInstance()
 let leftAreaFlag = ref(true)
 let rightAreaFlag = ref(true)
 
-instance?.proxy?.$Bus.on('changeArea',(areaNumber)=>{
+instance?.proxy?.$Bus.on('changeArea',(areaNumber:any)=>{
   if(areaNumber<3){
     leftAreaFlag.value = areaNumber===1?true:false
   }else{
@@ -69,6 +74,7 @@ instance?.proxy?.$Bus.on('changeArea',(areaNumber)=>{
 
   .centerArea {
     width: 50%;
+    // background-color: #8686a028;
   }
 }
 </style>

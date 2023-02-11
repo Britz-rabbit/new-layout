@@ -4,21 +4,21 @@
     <dv-decoration3 style="width:250px;height:15px;" />
     <div class="flex-a column" style="height: 90%;margin-top: 20px;">
       <div class="functionBar fw flex-a" style="height:6%;">
-        <div class="functionBlock">
+        <div class="functionBlock" @click="sendControlMsg('funlib', 1, 0, 0, 0, '回程充电')">
           <i class="iconfont icon-chongdian"></i>
           <span>回程充电</span>
         </div>
-        <div class="functionBlock">
+        <div class="functionBlock" @click="sendControlMsg('funlib', 2, 0, 0, 0, '故障复位')">
           <i class="iconfont icon-fuwei-02"></i>
           <span>故障复位</span>
         </div>
-        <div class="functionBlock " :class="{ active: robotLight.leftLight }"
-          @click="robotLight.leftLight = !robotLight.leftLight">
+        <div class="functionBlock " :class="{ active: robotLight.leftLight }" @click="sendControlMsg('funlib', 3, robotLight.leftLight ? 100 : 0, 0, 0, '前灯变化');
+        robotLight.leftLight = !robotLight.leftLight;">
           <i class="iconfont icon-cheqianbu-01" style="font-size: 48px;"></i>
           <span class="" style="transform: translateX(-20px)">前灯</span>
         </div>
         <div class="functionBlock" :class="{ active: robotLight.rightLight }"
-          @click="robotLight.rightLight = !robotLight.rightLight">
+          @click="sendControlMsg('funlib', 4, robotLight.rightLight ? 100 : 0, 0, 0, '后灯变化'); robotLight.rightLight = !robotLight.rightLight">
           <i class="iconfont icon-chehoubu-01" style="font-size: 48px;"></i>
           <span style="transform: translateX(-20px)">后灯</span>
         </div>
@@ -149,7 +149,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted, onBeforeUnmount } from "vue"
+import { reactive, ref, onMounted, onBeforeUnmount, watch } from "vue"
 import topBar from "../common/topBar.vue";
 import topBar_2 from "../common/topBar_2.vue";
 import controlSpeedPanel from "../echarts/main/controlSpeedPanel.vue";
@@ -157,8 +157,9 @@ import controlSpeedPanel from "../echarts/main/controlSpeedPanel.vue";
 onMounted(() => {
   timer.value = setInterval(() => {
     changeLocationPoint()
-  }, 400)
+  }, 1000)
   initWs()
+
 })
 
 onBeforeUnmount(() => {
@@ -169,6 +170,7 @@ onBeforeUnmount(() => {
 let timer = ref()
 
 //ws & sendMsg
+//#region
 var controlWs = new WebSocket(
   `ws://192.168.2.7:30006`
 )
@@ -195,8 +197,10 @@ function sendControlMsg(type: string, action: number, light: number,
   controlWs.send(JSON.stringify(paras))
   console.info(message);
 }
+//#endregion
 
 // location movement
+//#region
 let progress = ref()
 let location = ref(200)
 let totalDistance = 1200
@@ -206,16 +210,28 @@ function changeLocationPoint() {
   progress.value.style = `transform: translateX(${percent}px);`
   location.value = location.value > totalDistance - 10 ? 0 : location.value += 6
 }
+//#endregion
 
 //robot control
+//#region
 let customSpeed = ref(0.5)
 let speedStepLength = ref()
-let robotLight = reactive({
+
+var robotLight = reactive({
   leftLight: false,
   rightLight: false
 })
-let is_robotForward = ref(0)// 0:stop 1:back 2:forward
+setTimeout(() => {
+  if (localStorage["robotLight"]) {
+    robotLight.leftLight = JSON.parse(localStorage["robotLight"]).leftLight
+    robotLight.rightLight = JSON.parse(localStorage["robotLight"]).rightLight
+  }
+}, 200);
+watch(() => robotLight, (v) => {
+  localStorage["robotLight"] = JSON.stringify(v)
+}, { deep: true })
 
+let is_robotForward = ref(0)// 0:stop 1:back 2:forward
 function changeForward(modeNum: number) {
   is_robotForward.value = modeNum
   switch (modeNum) {
@@ -233,15 +249,21 @@ function changeForward(modeNum: number) {
   }
 }
 function changeSpeed(mode: string) {
-  if (mode === 'add') { customSpeed.value += speedStepLength.value || 0.05 } else {
+  if (customSpeed.value > 1.5 || customSpeed.value < 0) customSpeed.value = 0.5
+  if (mode === 'add') {
+    customSpeed.value += speedStepLength.value || 0.05
+    sendControlMsg('robot', 3, Number(customSpeed.value.toFixed(2)), 0, 0, `机器人速度是${customSpeed.value}`)
+  } else {
     customSpeed.value -= speedStepLength.value || 0.05
+    sendControlMsg('robot', 4, Number(customSpeed.value.toFixed(2)), 0, 0, `机器人速度是${customSpeed.value}`)
   }
-  if (is_robotForward) {
-    customSpeed.value === 2 ?
-      sendControlMsg('robot', 1, customSpeed.value, 0, 0, `机器人以${customSpeed.value}前进`) :
-      sendControlMsg('robot', 2, customSpeed.value, 0, 0, `机器人以${customSpeed.value}后退`)
-  }
+  // if (is_robotForward) {
+  //   customSpeed.value === 2 ?
+  //     sendControlMsg('robot', 1, customSpeed.value, 0, 0, `机器人以${customSpeed.value}前进`) :
+  //     sendControlMsg('robot', 2, customSpeed.value, 0, 0, `机器人以${customSpeed.value}后退`)
+  // }
 }
+//#endregion
 
 //tripod control
 let tripodLight = ref(50)
@@ -445,7 +467,7 @@ let tripodLightMarks = reactive({
         left: 84px;
         top: 84px;
         color: #090909;
-        background: #e8e8e8;
+        background: #FFFFFF;
         font-size: 36px;
         border: 1px solid #e8e8e8;
         transition: all .3s ease;

@@ -1,12 +1,12 @@
 <template>
     <div class="container color-f flex-a ">
-        <dv-decoration7 style="width:30%;height:30px;margin: 1%;" :color="['#4fd2dd', '#00ffff']">
+        <dv-decoration7 style="width:40%;height:30px;margin: 1%;" :color="['#4fd2dd', '#00ffff']">
             <div color-white font-300>
-                {{ title }}
+                &nbsp;{{ title }}&nbsp;
             </div>
         </dv-decoration7>
         <!-- <span class="gray" style="font-size: 16px;line-height: 38px;">/ / / /</span> -->
-        <span class="gray font-b " style="width: 60%;line-height: 34px;">------------------------------------------</span>
+        <span class="gray font-b " style="width: 60%;line-height: 34px;">------------------------------------</span>
     </div>
 </template>
 
