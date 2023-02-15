@@ -39,5 +39,4 @@ declare module "vue" {
 }
 app.config.globalProperties.$Bus = Mit
 
-
 app.mount('#app')

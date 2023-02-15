@@ -1,12 +1,17 @@
 <template>
   <dv-full-screen-container ref="appRef">
-    <router-view></router-view>
+    <el-config-provider :locale="locale">
+      <router-view></router-view>
+    </el-config-provider>
   </dv-full-screen-container>
 </template>
 
 <script lang="ts" setup>
 import { reactive, toRefs, ref, onBeforeUnmount, onMounted } from "vue"
 import { useCurrenInfo } from "./store/";
+import { ElConfigProvider } from "element-plus";
+import zhCn from "element-plus/lib/locale/lang/zh-cn";
+let locale = zhCn
 onMounted(() => {
   setTimeout(() => {
     resize()
@@ -18,9 +23,9 @@ onMounted(() => {
 
   initWs()
 
-  timer.value = setInterval(()=>{
+  timer.value = setInterval(() => {
     globalWs.send('getsensor')
-  },1000)
+  }, 1000)
 })
 
 onBeforeUnmount(() => {

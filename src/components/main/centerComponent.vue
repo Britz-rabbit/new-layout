@@ -11,18 +11,19 @@
     </div>
 
     <div class="mainVideo" style="height: 60%;transform: translateY(-10px);">
-      <img src="../../assets/img/temp/video_placeholder.png" class="fw fh">
+      <img v-show="is_leftVideo" :src="visible_video" class="fw fh">
+      <img v-show="!is_leftVideo" :src="IR_video" class="fw fh">
     </div>
 
     <div class="viceVideo" style="height:28%;transform: translateY(-10px);">
       <topBar title="视频选择与巡检控制"></topBar>
       <div class="flex-a fh">
 
-        <div class="" style="width: 31%;height: 78%;margin-top: 2%;">
-          <img src="../../assets/img/temp/video_placeholder_2.png" class="fw fh">
+        <div class="" @click="is_leftVideo = true" style="width: 31%;height: 78%;margin-top: 2%;">
+          <img :src="visible_video"  class="fw fh">
         </div>
-        <div class="" style="width: 31%;height: 78%;margin-top: 2%;">
-          <img src="../../assets/img/temp/video_placeholder_2.png" class="fw fh">
+        <div class="" @click="is_leftVideo = false" style="width: 31%;height: 78%;margin-top: 2%;">
+          <img :src="IR_video"  class="fw fh">
         </div>
 
         <div class="color-f par_con" style="width: 31%;height: 78%;margin-top: 2%;">
@@ -61,10 +62,18 @@
 </template>
 
 <script lang="ts" setup>
-import { number } from "echarts";
-import { reactive, ref, getCurrentInstance } from "vue"
+import { reactive, ref, getCurrentInstance, onMounted, onBeforeUnmount } from "vue"
 import topBar from "../common/topBar.vue";
-//change area
+
+onMounted(()=>{
+  initWs()
+})
+
+onBeforeUnmount(()=>{
+  CenterWs.close()
+})
+
+//#region change area
 let lefttArea_flag = ref(true)
 let reightArea_flag = ref(true)
 const instance = getCurrentInstance()
@@ -72,16 +81,35 @@ const instance = getCurrentInstance()
 function changeArea(areaNumber: number) {
  instance?.proxy?.$Bus.emit('changeArea',areaNumber)
 } 
+//#endregion
 
-//change video
+//#region ws
+var CenterWs = new WebSocket(
+  'ws://192.168.2.7:30008'
+)
+let visible_video = ref()
+let IR_video = ref()
+let is_leftVideo = ref(true)
 
-//change patrol mode
+function initWs(){
+  CenterWs.onmessage = function(e){
+    let data = JSON.parse(e.data)
+    if(data?.type === 'IR') IR_video.value = 'data:image/jpeg;base64,' + data.src
+    else visible_video.value = 'data:image/jpeg;base64,' + data.src
+  }
+  CenterWs.onerror = function(){
+    console.warn('CenterWs error');
+  }
+}
+//#endregion
+
+//#region change patrol mode
 let currentMode = ref(0)
 function changePatrolMode(mode: number) {
   currentMode.value = currentMode.value===mode?0:mode
   console.info(`change to ${mode} mode`);
 }
-
+//#endregion
 
 </script>
 

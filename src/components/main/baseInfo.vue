@@ -112,6 +112,7 @@ import infoBlock from "./components/infoBlock.vue";
 import contrastLine from "../echarts/main/infoColumn.vue";
 import infoLine from "../echarts/main/infoLine.vue";
 import { useCurrenInfo } from "../../store";
+// import { storeToRefs } from "pinia"; // can't deal with multinest nesting
 
 onMounted(() => {
   
@@ -148,16 +149,6 @@ watch(() => batteryPower.value, (v) => {
     formatter: '{value}%'
   }, { immediate: true }
 })
-
-// watchEffect(()=>{
-//   powerConfig = {
-//     value: batteryPower.value,
-//     colors: ['#01c4f9', '#c135ff'],
-//     lineDash: [10, 2],
-//     borderRadius: 10,
-//     formatter: '{value}%'
-//   }
-// })
 
 //infoBlock
 let infoArr = reactive([[

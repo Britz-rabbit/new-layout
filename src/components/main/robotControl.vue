@@ -12,13 +12,13 @@
           <i class="iconfont icon-fuwei-02"></i>
           <span>故障复位</span>
         </div>
-        <div class="functionBlock " :class="{ active: robotLight.leftLight }" @click="sendControlMsg('funlib', 3, robotLight.leftLight ? 100 : 0, 0, 0, '前灯变化');
-        robotLight.leftLight = !robotLight.leftLight;">
+        <div class="functionBlock " :class="{ active: robotLight.leftLight }" 
+        @click="robotLight.leftLight = !robotLight.leftLight; sendControlMsg('funlib', 3, robotLight.leftLight ? 100 : 0, 0, 0, '前灯变化');">
           <i class="iconfont icon-cheqianbu-01" style="font-size: 48px;"></i>
           <span class="" style="transform: translateX(-20px)">前灯</span>
         </div>
-        <div class="functionBlock" :class="{ active: robotLight.rightLight }"
-          @click="sendControlMsg('funlib', 4, robotLight.rightLight ? 100 : 0, 0, 0, '后灯变化'); robotLight.rightLight = !robotLight.rightLight">
+        <div class="functionBlock" :class="{ active: robotLight.rightLight }" 
+        @click="robotLight.rightLight = !robotLight.rightLight; sendControlMsg('funlib', 4, robotLight.rightLight ? 100 : 0, 0, 0, '后灯变化');">
           <i class="iconfont icon-chehoubu-01" style="font-size: 48px;"></i>
           <span style="transform: translateX(-20px)">后灯</span>
         </div>
@@ -153,6 +153,7 @@ import { reactive, ref, onMounted, onBeforeUnmount, watch } from "vue"
 import topBar from "../common/topBar.vue";
 import topBar_2 from "../common/topBar_2.vue";
 import controlSpeedPanel from "../echarts/main/controlSpeedPanel.vue";
+import { useCurrenInfo } from "../../store/";
 
 onMounted(() => {
   timer.value = setInterval(() => {
@@ -202,13 +203,18 @@ function sendControlMsg(type: string, action: number, light: number,
 // location movement
 //#region
 let progress = ref()
-let location = ref(200)
+let location = ref(0)
 let totalDistance = 1200
+let currentLocation = useCurrenInfo().robotInfo.position.position
+
+setTimeout(() => {
+  location.value = Math.floor(Number(currentLocation) / 1000)
+}, 230);
 
 function changeLocationPoint() {
   let percent = Number((location.value / totalDistance).toFixed(2)) * 200 - 200
   progress.value.style = `transform: translateX(${percent}px);`
-  location.value = location.value > totalDistance - 10 ? 0 : location.value += 6
+  // location.value = location.value > totalDistance - 10 ? 0 : location.value += 6
 }
 //#endregion
 
@@ -265,7 +271,7 @@ function changeSpeed(mode: string) {
 }
 //#endregion
 
-//tripod control
+//#region tripod control
 let tripodLight = ref(50)
 let tripodLightMarks = reactive({
   15: {
@@ -287,6 +293,7 @@ let tripodLightMarks = reactive({
     label: '85',
   },
 })
+//#endregion
 </script>
 
 <style lang="less" scoped>

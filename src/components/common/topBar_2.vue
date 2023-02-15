@@ -1,6 +1,6 @@
 <template>
-    <div class="container color-f flex-a ">
-        <dv-decoration7 style="width:40%;height:30px;margin: 1%;" :color="['#4fd2dd', '#00ffff']">
+    <div class="container color-f flex-a " style="height: auto;">
+        <dv-decoration7 style="width:40%;height:30px;" :color="['#4fd2dd', '#00ffff']">
             <div color-white font-300>
                 &nbsp;{{ title }}&nbsp;
             </div>
